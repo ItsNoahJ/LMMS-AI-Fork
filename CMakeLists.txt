@@ -18,19 +18,69 @@ option(BUILD_TESTING "Build tests" ON)
 option(ENABLE_PROFILING "Enable performance profiling" OFF)
 option(USE_SYSTEM_TENSORFLOW "Use system TensorFlow instead of bundled" OFF)
 option(BUILD_DOCS "Build documentation" OFF)
+option(BUILD_LMMS "Build LMMS from submodule" ON)
+option(BUILD_AI_COMPONENTS "Build AI components" ON)
+
+# Setup VCPKG for dependency management
+if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+    set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake"
+        CACHE STRING "Vcpkg toolchain file")
+endif()
 
 # Find dependencies
 find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
-# Other dependencies will be added as needed
+find_package(Threads REQUIRED)
 
-# Add components
-add_subdirectory(core)
-add_subdirectory(ai)
+# Configure LMMS submodule
+if(BUILD_LMMS)
+    message(STATUS "Configuring LMMS submodule...")
+    
+    # Set LMMS build options
+    set(LMMS_BUILD_TESTING OFF CACHE BOOL "Disable LMMS tests when building as submodule")
+    set(LMMS_BUILD_DOCS OFF CACHE BOOL "Disable LMMS docs when building as submodule")
+    
+    # Add LMMS as a subdirectory
+    add_subdirectory(lmms)
+    
+    # Export LMMS include directories for other components
+    set(LMMS_INCLUDE_DIRS
+        "${CMAKE_CURRENT_SOURCE_DIR}/lmms/include"
+        "${CMAKE_CURRENT_SOURCE_DIR}/lmms/src"
+        "${CMAKE_CURRENT_BINARY_DIR}/lmms/src"
+        CACHE INTERNAL "LMMS include directories"
+    )
+endif()
+
+# Configure TensorFlow
+if(NOT USE_SYSTEM_TENSORFLOW)
+    message(STATUS "Configuring TensorFlow submodule...")
+    # TensorFlow configuration will be added here
+    # This is complex and will require additional work
+endif()
+
+# Configure Magenta
+message(STATUS "Configuring Magenta submodule...")
+# Magenta configuration will be added here
+# This will involve setting up Python environment and model paths
+
+# Add core components
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/core/CMakeLists.txt")
+    add_subdirectory(core)
+endif()
+
+# Add AI components
+if(BUILD_AI_COMPONENTS)
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/ai/CMakeLists.txt")
+        add_subdirectory(ai)
+    endif()
+endif()
 
 # Testing
 if(BUILD_TESTING)
     enable_testing()
-    add_subdirectory(tests)
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests/CMakeLists.txt")
+        add_subdirectory(tests)
+    endif()
 endif()
 
 # Documentation
@@ -114,6 +164,19 @@ mark_as_advanced(MKDOCS_EXECUTABLE)
 ")
 endif()
 
+# Create a cohesive build target that depends on all components
+add_custom_target(lmms-magenta ALL
+    DEPENDS lmms
+    COMMENT "Building LMMS-Magenta integrated project"
+)
+
+# Add custom target for initializing and updating all submodules
+add_custom_target(update-submodules
+    COMMAND git submodule update --init --recursive
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    COMMENT "Updating all Git submodules"
+)
+
 # Output configuration information
 message(STATUS "LMMS-Magenta configuration:")
 message(STATUS "  Version: ${LMMS_MAGENTA_VERSION}")
@@ -122,5 +185,7 @@ message(STATUS "  Build testing: ${BUILD_TESTING}")
 message(STATUS "  Enable profiling: ${ENABLE_PROFILING}")
 message(STATUS "  Use system TensorFlow: ${USE_SYSTEM_TENSORFLOW}")
 message(STATUS "  Build documentation: ${BUILD_DOCS}")
+message(STATUS "  Build LMMS: ${BUILD_LMMS}")
+message(STATUS "  Build AI components: ${BUILD_AI_COMPONENTS}")
 
 message(STATUS "LMMS-Magenta integration structure initialized")

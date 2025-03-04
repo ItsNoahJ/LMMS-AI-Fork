@@ -1,0 +1,44 @@
+site_name: LMMS-Magenta
+site_description: Integration of Magenta AI music generation with LMMS
+site_author: LMMS-Magenta Team
+repo_url: https://github.com/yourusername/lmms-magenta
+
+theme:
+  name: material
+  palette:
+    primary: indigo
+    accent: indigo
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - toc.integrate
+
+markdown_extensions:
+  - admonition
+  - codehilite
+  - pymdownx.superfences
+  - pymdownx.tabbed
+  - pymdownx.details
+
+nav:
+  - Home: index.md
+  - Getting Started:
+      - Installation: getting_started/installation.md
+      - Quick Start: getting_started/quick_start.md
+  - User Guide:
+      - UI: user_guide/ui.md
+      - Plugins: user_guide/plugins.md
+      - Workflows: user_guide/workflows.md
+  - Developer Guide:
+      - Architecture: developer_guide/architecture.md
+      - Build System: developer_guide/build_system.md
+      - Coding Standards: developer_guide/coding_standards.md
+      - Contributing: developer_guide/contributing.md
+  - API Reference:
+      - Core API: api/core.md
+      - AI API: api/ai.md
+      - Plugin API: api/plugins.md
+  - Reference:
+      - Configuration: reference/configuration.md
+      - Commands: reference/commands.md
+      - Troubleshooting: reference/troubleshooting.md

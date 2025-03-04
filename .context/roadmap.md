@@ -13,6 +13,7 @@
 - [x] Set up initial CMake configuration
 - [x] Configure Qt and MinGW environment
 - [x] Create .gitignore file for project
+- [x] Configure Git submodules for external dependencies
 
 ### Phase 2: Core AI Features (IN PROGRESS)
 - Implement MusicVAE pattern generation

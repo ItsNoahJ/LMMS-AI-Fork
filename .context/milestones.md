@@ -23,6 +23,7 @@
 - ✅ Configured Qt 5.15.2 with MinGW 8.1.0 environment
 - ✅ Created setup scripts for environment configuration
 - ✅ Added .gitignore file for the project
+- ✅ Configured Git submodules for external dependencies (LMMS, Magenta, TensorFlow, VCPKG)
 - ✅ Implement unified directory structure
 - ✅ Create modular CMakeLists.txt files
 - ✅ Migrate utility classes to new structure
